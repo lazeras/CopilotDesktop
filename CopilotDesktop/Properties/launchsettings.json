@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "CopilotDesktop (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "CopilotDesktop (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}
