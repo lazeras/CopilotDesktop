@@ -10,7 +10,7 @@ namespace CopilotDesktop.ViewModels;
 public partial class ShellViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    private bool isBackEnabled;
+    private bool isBackEnabled = false;
 
     [ObservableProperty]
     private object? selected;

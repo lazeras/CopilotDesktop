@@ -12,6 +12,7 @@ using CopilotDesktop.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
+using System.Diagnostics;
 
 namespace CopilotDesktop;
 
@@ -93,8 +94,62 @@ public partial class App : Application
 
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
-        // TODO: Log and handle exceptions as appropriate.
-        // https://docs.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.application.unhandledexception.
+        LogException(e.Exception, e.Message);
+
+        e.Handled = true;
+    }
+
+    private static void LogException(Exception? exception, string message)
+    {
+        try
+        {
+            var logDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CopilotDesktop", "Logs");
+            Directory.CreateDirectory(logDir);
+
+            var logFile = Path.Combine(logDir, $"errors_{DateTime.Now:yyyy-MM-dd}.log");
+
+            var exceptionDetails = exception != null
+                ? $"Exception Type: {exception.GetType().FullName}\n" +
+                  $"Message: {exception.Message}\n" +
+                  $"Stack Trace:\n{exception.StackTrace}\n" +
+                  $"Inner Exception: {exception.InnerException?.Message ?? "None"}"
+                : "No exception details available";
+
+            var logMessage = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Unhandled Exception\n" +
+                            $"Error Message: {message}\n" +
+                            $"{exceptionDetails}\n" +
+                            $"{new string('-', 80)}\n\n";
+
+            File.AppendAllText(logFile, logMessage);
+
+            TryLogToWindowsEventLog(message, exceptionDetails);
+        }
+        catch
+        {
+        }
+    }
+
+    private static void TryLogToWindowsEventLog(string message, string exceptionDetails)
+    {
+        try
+        {
+            const string source = "CopilotDesktop";
+            const string logName = "Application";
+
+            if (!System.Diagnostics.EventLog.SourceExists(source))
+            {
+                System.Diagnostics.EventLog.CreateEventSource(source, logName);
+            }
+
+            var logMessage = $"Unhandled exception in CopilotDesktop\n\n" +
+                            $"Error Message: {message}\n\n" +
+                            $"{exceptionDetails}";
+
+            System.Diagnostics.EventLog.WriteEntry(source, logMessage, System.Diagnostics.EventLogEntryType.Error, 1001);
+        }
+        catch
+        {
+        }
     }
 
     protected async override void OnLaunched(LaunchActivatedEventArgs args)

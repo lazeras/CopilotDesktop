@@ -37,6 +37,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.8.260209005" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" Version="1.8.260204000" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="3.0.1" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="10.0.3" />
     <PackageReference Include="WinUIEx" Version="2.9.0" />
   </ItemGroup>
 
