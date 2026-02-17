@@ -27,12 +27,24 @@ public sealed partial class WebViewPage : Page
     /// </summary>
     public WebViewPage()
     {
-        ViewModel = App.GetService<WebViewViewModel>();
-        InitializeComponent();
+        try
+        {
+            ViewModel = App.GetService<WebViewViewModel>();
+            InitializeComponent();
 
-        // Initialize the WebView service with the WebView2 control
-        ViewModel.WebViewService.Initialize(CopilotView); 
-        this.Loaded += MainWindow_Loaded;
+            // Initialize the WebView service with the WebView2 control
+            if (CopilotView != null)
+            {
+                ViewModel.WebViewService.Initialize(CopilotView);
+            }
+
+            this.Loaded += MainWindow_Loaded;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ERROR] WebViewPage constructor: {ex}");
+            throw;
+        }
     }
 
     /// <summary>
@@ -45,19 +57,41 @@ public sealed partial class WebViewPage : Page
     /// This method performs two key operations:
     /// 1. Extends content into the title bar for a custom window appearance
     /// 2. Ensures the WebView2 runtime is initialized before the control is used
+    /// Includes defensive error handling to prevent crashes during initialization.
     /// </remarks>
     private async void MainWindow_Loaded(object sender, RoutedEventArgs e)
     {
-        var window = App.MainWindow;
-        if (window != null)
+        try
         {
-            // Enable custom title bar by extending content into the title bar area
-            window.ExtendsContentIntoTitleBar = true;
-            // Set the draggable title bar region
-            window.SetTitleBar(AppTitleBar);
-        }
+            System.Diagnostics.Debug.WriteLine("[INFO] WebViewPage: MainWindow_Loaded started");
 
-        // Ensure WebView2 runtime is initialized before navigation
-        await CopilotView.EnsureCoreWebView2Async();
+            // Small delay to ensure UI thread is fully ready
+            await Task.Delay(100);
+
+            var window = App.MainWindow;
+            if (window != null)
+            {
+                // Enable custom title bar by extending content into the title bar area
+                window.ExtendsContentIntoTitleBar = true;
+                // Set the draggable title bar region
+                if (AppTitleBar != null)
+                {
+                    window.SetTitleBar(AppTitleBar);
+                }
+            }
+
+            // Ensure WebView2 runtime is initialized before navigation
+            if (CopilotView != null)
+            {
+                //System.Diagnostics.Debug.WriteLine("[INFO] WebViewPage: Initializing WebView2...");
+                await CopilotView.EnsureCoreWebView2Async();
+                //System.Diagnostics.Debug.WriteLine("[INFO] WebViewPage: WebView2 initialized successfully");
+            }
+        }
+        catch (Exception ex)
+        {
+            //System.Diagnostics.Debug.WriteLine($"[ERROR] WebViewPage MainWindow_Loaded: {ex}");
+            // Don't rethrow - allow page to load even if WebView fails
+        }
     }
 }

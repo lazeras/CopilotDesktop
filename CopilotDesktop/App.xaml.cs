@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace CopilotDesktop;
 
@@ -47,6 +48,14 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+
+        // Enable XAML debugging when debugger is attached
+        if (Debugger.IsAttached)
+        {
+            this.DebugSettings.EnableFrameRateCounter = false;
+            this.DebugSettings.BindingFailed += DebugSettings_BindingFailed;
+            this.DebugSettings.XamlResourceReferenceFailed += DebugSettings_XamlResourceReferenceFailed;
+        }
 
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
@@ -92,6 +101,24 @@ public partial class App : Application
         UnhandledException += App_UnhandledException;
     }
 
+    /// <summary>
+    /// Handles XAML binding failures during debugging.
+    /// </summary>
+    private void DebugSettings_BindingFailed(object? sender, BindingFailedEventArgs e)
+    {
+        Debug.WriteLine($"[XAML Binding Failed] {e.Message}");
+        LogException(null, $"XAML Binding Failed: {e.Message}");
+    }
+
+    /// <summary>
+    /// Handles XAML resource reference failures during debugging.
+    /// </summary>
+    private void DebugSettings_XamlResourceReferenceFailed(object? sender, XamlResourceReferenceFailedEventArgs e)
+    {
+        Debug.WriteLine($"[XAML Resource Failed] {e.Message}");
+        LogException(null, $"XAML Resource Failed: {e.Message}");
+    }
+
     private void App_UnhandledException(object sender, Microsoft.UI.Xaml.UnhandledExceptionEventArgs e)
     {
         LogException(e.Exception, e.Message);
@@ -129,6 +156,25 @@ public partial class App : Application
         }
     }
 
+    /// <summary>
+    /// Gets the HRESULT error code from an exception.
+    /// </summary>
+    private static string GetHResult(Exception exception)
+    {
+        try
+        {
+            var hresult = exception.HResult;
+            return $"0x{hresult:X8} ({hresult})";
+        }
+        catch
+        {
+            return "Unknown";
+        }
+    }
+
+    /// <summary>
+    /// Attempts to log the exception to Windows Event Log.
+    /// </summary>
     private static void TryLogToWindowsEventLog(string message, string exceptionDetails)
     {
         try
@@ -156,8 +202,36 @@ public partial class App : Application
     {
         base.OnLaunched(args);
 
-        //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+        try
+        {
+            // Diagnostic logging
+            Debug.WriteLine("=== Application Launch Diagnostics ===");
+            Debug.WriteLine($"MainWindow initialized: {MainWindow != null}");
 
-        await App.GetService<IActivationService>().ActivateAsync(args);
+            // Test resource loading
+            try
+            {
+                var testResource = Application.Current.Resources["LargeFontSize"];
+                Debug.WriteLine($"XAML Resources loaded successfully: {testResource != null}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"XAML Resource loading failed: {ex.Message}");
+                LogException(ex, "XAML Resource Loading Failed");
+            }
+
+            //App.GetService<IAppNotificationService>().Show(string.Format("AppNotificationSamplePayload".GetLocalized(), AppContext.BaseDirectory));
+
+            // Small delay to ensure UI thread is ready
+            await Task.Delay(50);
+
+            await App.GetService<IActivationService>().ActivateAsync(args);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"OnLaunched critical error: {ex}");
+            LogException(ex, "Application Launch Failed");
+            throw;
+        }
     }
 }

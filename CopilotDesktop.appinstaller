@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AppInstaller 
+    xmlns="http://schemas.microsoft.com/appx/appinstaller/2021"
+    Version="1.0.0.0" 
+    Uri="https://yourserver.com/CopilotDesktop.appinstaller">
+    
+  <MainBundle 
+      Name="d2f5f4e5-d477-4cf4-91f6-d30c4153bc2a"
+      Publisher="CN=Kaoses"
+      Version="1.0.0.0"
+      Uri="https://yourserver.com/CopilotDesktop.msix" />
+      
+  <Dependencies>
+    <!-- WebView2 Runtime Dependency -->
+    <Package 
+        Name="Microsoft.WebView2" 
+        Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US"
+        Uri="https://go.microsoft.com/fwlink/?linkid=2196064"
+        ProcessorArchitecture="x64" />
+  </Dependencies>
+  
+  <UpdateSettings>
+    <OnLaunch 
+        HoursBetweenUpdateChecks="0"
+        UpdateBlocksActivation="true"
+        ShowPrompt="true" />
+  </UpdateSettings>
+  
+</AppInstaller>
