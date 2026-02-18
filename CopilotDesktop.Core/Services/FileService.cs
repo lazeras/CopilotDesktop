@@ -1,8 +1,6 @@
-﻿using System.Text;
-
-using CopilotDesktop.Core.Contracts.Services;
-
+﻿using CopilotDesktop.Core.Contracts.Services;
 using Newtonsoft.Json;
+using System.Text;
 
 namespace CopilotDesktop.Core.Services;
 

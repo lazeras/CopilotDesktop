@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using CopilotDesktop.Contracts.Services;
-
+﻿using CopilotDesktop.Contracts.Services;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.Web.WebView2.Core;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CopilotDesktop.Services;
 

@@ -1,11 +1,9 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-using CopilotDesktop.Contracts.Services;
+﻿using CopilotDesktop.Contracts.Services;
 using CopilotDesktop.Contracts.ViewModels;
 using CopilotDesktop.Helpers;
-
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CopilotDesktop.Services;
 

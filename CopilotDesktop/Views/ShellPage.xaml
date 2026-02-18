@@ -13,13 +13,13 @@
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <SolidColorBrush x:Key="ShellBackgroundBrush" Color="#f8f4f1"/>
+                    <SolidColorBrush x:Key="ShellBackgroundBrush" Color="#f8f4f1" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <SolidColorBrush x:Key="ShellBackgroundBrush" Color="#151a28"/>
+                    <SolidColorBrush x:Key="ShellBackgroundBrush" Color="#151a28" />
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Default">
-                    <SolidColorBrush x:Key="ShellBackgroundBrush" Color="#151a28"/>
+                    <SolidColorBrush x:Key="ShellBackgroundBrush" Color="#151a28" />
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
         </ResourceDictionary>
@@ -40,7 +40,7 @@
                        VerticalAlignment="Center"
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}"
-                       Margin="28,0,0,0"/>
+                       Margin="28,0,0,0" />
         </Grid>
         <NavigationView
             x:Name="NavigationViewControl"
@@ -81,7 +81,7 @@
                     </behaviors:NavigationViewHeaderBehavior.DefaultHeaderTemplate>
                 </behaviors:NavigationViewHeaderBehavior>
             </i:Interaction.Behaviors>
-                <Grid Margin="0,0,0,0">
+            <Grid Margin="0,0,0,0">
                 <Frame x:Name="NavigationFrame" />
             </Grid>
         </NavigationView>

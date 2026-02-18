@@ -5,8 +5,6 @@ using CopilotDesktop.Helpers;
 using CopilotDesktop.Models;
 
 using Microsoft.Extensions.Options;
-
-using Windows.ApplicationModel;
 using Windows.Storage;
 
 namespace CopilotDesktop.Services;

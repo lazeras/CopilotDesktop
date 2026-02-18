@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid x:Name="AppTitleBar" Height="32" VerticalAlignment="Top" Background="Transparent" Margin="48,0,0,0">
-            <TextBlock Text="Copilot" VerticalAlignment="Center" FontSize="14" Opacity="0.8"/>
+            <TextBlock Text="Copilot" VerticalAlignment="Center" FontSize="14" Opacity="0.8" />
         </Grid>
         <WebView2
             x:Name="CopilotView"
@@ -36,7 +36,5 @@
             <TextBlock x:Uid="WebView_FailedMessage" HorizontalAlignment="Center" TextWrapping="WrapWholeWords" />
             <HyperlinkButton x:Uid="WebView_Reload" Command="{x:Bind ViewModel.ReloadCommand}" HorizontalAlignment="Center" />
         </StackPanel>
-
-
     </Grid>
 </Page>

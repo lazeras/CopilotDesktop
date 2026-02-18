@@ -14,10 +14,16 @@
 	<UseWinUI>true</UseWinUI>
 	<EnableMsixTooling>true</EnableMsixTooling>
 	<WindowsAppSDKSelfContained>false</WindowsAppSDKSelfContained>
+	<WindowsPackageType>None</WindowsPackageType>
 	<DisableVSTelemetry>true</DisableVSTelemetry>
 	<AssemblyName></AssemblyName>
 	<AssemblyTitle></AssemblyTitle>
 	<PackageIcon>WindowIcon.ico</PackageIcon>
+	<RepositoryUrl>https://github.com/lazeras/CopilotDesktop</RepositoryUrl>
+
+	<!-- Size Optimizations -->
+	<SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	<GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Content Remove="Assets\copilot.ico" />

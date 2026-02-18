@@ -1,8 +1,9 @@
 ﻿using CopilotDesktop.Helpers;
 using CopilotDesktop.Services;
 using CopilotDesktop.Views;
-using Windows.UI.ViewManagement;
 using System.Runtime.InteropServices;
+
+using Windows.UI.ViewManagement;
 
 namespace CopilotDesktop;
 
@@ -17,7 +18,7 @@ public sealed partial class MainWindow : WindowEx
 
     private readonly Microsoft.UI.Dispatching.DispatcherQueue dispatcherQueue;
     private readonly UISettings settings;
-    private HotkeyService? _hotkey; 
+    private HotkeyService? _hotkey;
     private MiniChatWindow? _miniWindow;
 
     public MainWindow()
@@ -43,27 +44,45 @@ public sealed partial class MainWindow : WindowEx
 
         Closed += MainWindow_Closed;
 
-        _hotkey = new HotkeyService(this); 
+        _hotkey = new HotkeyService(this);
         _hotkey.HotkeyPressed += ToggleMiniWindow;
-
     }
 
     private void ToggleMiniWindow()
     {
-        if (_miniWindow == null) 
-        { 
-            _miniWindow = new MiniChatWindow(); 
-            _miniWindow.Closed += (s, e) => 
-            { 
+        try
+        {
+            if (_miniWindow == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[INFO] Creating MiniChatWindow...");
+
+                _miniWindow = new MiniChatWindow();
+                _miniWindow.Closed += (s, e) =>
+                {
+                    _miniWindow = null;
+                    this.AppWindow.Show();
+                    this.Activate();
+                };
+
+                _miniWindow.Activate();
+                this.AppWindow.Hide();
+
+                System.Diagnostics.Debug.WriteLine("[INFO] MiniChatWindow activated");
+            }
+            else
+            {
+                _miniWindow.Close();
                 _miniWindow = null;
-                this.AppWindow.Show();
-                this.Activate();
-            }; 
-            _miniWindow.Activate();
-            this.AppWindow.Hide();
-        } else { 
-            _miniWindow.Close(); 
-            _miniWindow = null; 
+                System.Diagnostics.Debug.WriteLine("[INFO] MiniChatWindow closed");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ERROR] ToggleMiniWindow: {ex}");
+            // If mini window fails, make sure main window is visible
+            _miniWindow = null;
+            this.AppWindow.Show();
+            this.Activate();
         }
     }
 

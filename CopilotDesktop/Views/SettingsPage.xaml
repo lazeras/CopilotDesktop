@@ -35,7 +35,7 @@
                 <!-- Page Header -->
                 <StackPanel Spacing="4">
                     <TextBlock Text="Settings" Style="{ThemeResource TitleLargeTextBlockStyle}" />
-                    <TextBlock Text="Customize your Copilot Desktop experience" 
+                    <TextBlock Text="Customize your Copilot Desktop experience"
                                Style="{ThemeResource BodyTextBlockStyle}"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                 </StackPanel>
@@ -68,7 +68,7 @@
                             <StackPanel Grid.Column="1" Spacing="12">
                                 <StackPanel Spacing="4">
                                     <TextBlock x:Uid="Settings_Theme" Style="{StaticResource SettingHeaderStyle}" />
-                                    <TextBlock Text="Choose your preferred app theme" 
+                                    <TextBlock Text="Choose your preferred app theme"
                                                Style="{StaticResource SettingDescriptionStyle}" />
                                 </StackPanel>
 
@@ -147,7 +147,7 @@
                             <!-- Content -->
                             <StackPanel Grid.Column="1" Spacing="8">
                                 <TextBlock Text="Version Information" Style="{StaticResource SettingHeaderStyle}" />
-                                <TextBlock Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}" 
+                                <TextBlock Text="{x:Bind ViewModel.VersionDescription, Mode=OneWay}"
                                           Style="{ThemeResource BodyTextBlockStyle}"
                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
                             </StackPanel>
@@ -208,7 +208,7 @@
                             <!-- Content -->
                             <StackPanel Grid.Column="1" Spacing="8">
                                 <TextBlock Text="Webiste" Style="{StaticResource SettingHeaderStyle}" />
-                                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink" 
+                                <HyperlinkButton x:Uid="SettingsPage_PrivacyTermsLink"
                                                Padding="0"
                                                Margin="0" />
                             </StackPanel>

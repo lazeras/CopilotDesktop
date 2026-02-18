@@ -1,14 +1,10 @@
-﻿using System.Reflection;
-using System.Windows.Input;
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using CopilotDesktop.Contracts.Services;
 using CopilotDesktop.Helpers;
-
 using Microsoft.UI.Xaml;
-
+using System.Reflection;
+using System.Windows.Input;
 using Windows.ApplicationModel;
 
 namespace CopilotDesktop.ViewModels;

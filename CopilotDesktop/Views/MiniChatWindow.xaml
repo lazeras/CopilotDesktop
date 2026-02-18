@@ -15,11 +15,11 @@
             <TextBlock Text="Mini Copilot"
                        Margin="12,0,0,0"
                        VerticalAlignment="Center"
-                       Opacity="0.8"/>
+                       Opacity="0.8" />
         </Grid>
 
         <!-- WebView2 -->
         <wv2:WebView2 x:Name="MiniWebView"
-                      Margin="0,32,0,0"/>
+                      Margin="0,32,0,0" />
     </Grid>
 </Window>

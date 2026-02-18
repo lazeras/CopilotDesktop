@@ -1,10 +1,7 @@
-﻿using System.Collections.Specialized;
-using System.Web;
-
-using CopilotDesktop.Contracts.Services;
-using CopilotDesktop.ViewModels;
-
+﻿using CopilotDesktop.Contracts.Services;
 using Microsoft.Windows.AppNotifications;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace CopilotDesktop.Notifications;
 
@@ -31,7 +28,6 @@ public class AppNotificationService : IAppNotificationService
 
     public void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
     {
-
     }
 
     public bool Show(string payload)

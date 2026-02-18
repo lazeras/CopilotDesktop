@@ -1,10 +1,10 @@
 ﻿{
-    "profiles": {
-      "CopilotDesktop (Package)": {
-        "commandName": "MsixPackage"
-      },
-      "CopilotDesktop (Unpackaged)": {
-        "commandName": "Project"
-      }
+  "profiles": {
+    "CopilotDesktop (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "CopilotDesktop (Unpackaged)": {
+      "commandName": "Project"
     }
+  }
 }

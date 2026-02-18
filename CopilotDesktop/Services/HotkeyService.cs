@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.UI.Xaml;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.UI.Xaml;
 
 namespace CopilotDesktop.Services
 {
@@ -55,7 +50,7 @@ namespace CopilotDesktop.Services
         /// </summary>
         private delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
-        #endregion
+        #endregion Win32 API Imports
 
         #region Constants
 
@@ -84,7 +79,7 @@ namespace CopilotDesktop.Services
         /// </summary>
         private const int HOTKEY_ID = 9000;
 
-        #endregion
+        #endregion Constants
 
         #region Fields
 
@@ -94,7 +89,7 @@ namespace CopilotDesktop.Services
         private WndProcDelegate _newWndProc;
         private bool _disposed;
 
-        #endregion
+        #endregion Fields
 
         #region Events
 
@@ -103,7 +98,7 @@ namespace CopilotDesktop.Services
         /// </summary>
         public event Action? HotkeyPressed;
 
-        #endregion
+        #endregion Events
 
         #region Constructor
 
@@ -139,7 +134,7 @@ namespace CopilotDesktop.Services
             RegisterHotKey(_hwnd, HOTKEY_ID, MOD_CONTROL | MOD_SHIFT, (uint)Windows.System.VirtualKey.C);
         }
 
-        #endregion
+        #endregion Constructor
 
         #region Methods
 
@@ -204,6 +199,6 @@ namespace CopilotDesktop.Services
             _disposed = true;
         }
 
-        #endregion
+        #endregion Methods
     }
 }

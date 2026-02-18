@@ -2,7 +2,6 @@
 using CopilotDesktop.Contracts.Services;
 using CopilotDesktop.Core.Contracts.Services;
 using CopilotDesktop.Core.Services;
-using CopilotDesktop.Helpers;
 using CopilotDesktop.Models;
 using CopilotDesktop.Notifications;
 using CopilotDesktop.Services;
@@ -13,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace CopilotDesktop;
 
@@ -198,7 +196,7 @@ public partial class App : Application
         }
     }
 
-    protected async override void OnLaunched(LaunchActivatedEventArgs args)
+    protected override async void OnLaunched(LaunchActivatedEventArgs args)
     {
         base.OnLaunched(args);
 
