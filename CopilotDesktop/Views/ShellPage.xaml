@@ -32,15 +32,33 @@
               IsHitTestVisible="True"
               Background="{ThemeResource ShellBackgroundBrush}"
               VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <!-- Reserve space for window buttons so controls don't sit under them -->
+                <ColumnDefinition Width="120"/>
+            </Grid.ColumnDefinitions>
+
             <Image Source="/Assets/WindowIcon.ico"
+                   Grid.Column="0"
                    HorizontalAlignment="Left"
                    Width="16"
                    Height="16" />
+
             <TextBlock x:Name="AppTitleBarText"
+                       Grid.Column="1"
                        VerticalAlignment="Center"
                        TextWrapping="NoWrap"
                        Style="{StaticResource CaptionTextBlockStyle}"
                        Margin="28,0,0,0" />
+
+            <ComboBox x:Name="ProviderCombo"
+                      Grid.Column="1"
+                      Width="240"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      SelectionChanged="ProviderCombo_SelectionChanged"
+                      DisplayMemberPath="Name" />
         </Grid>
         <NavigationView
             x:Name="NavigationViewControl"

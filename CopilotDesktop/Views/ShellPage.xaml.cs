@@ -6,6 +6,8 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using System.Linq;
+using CopilotDesktop.Models;
 
 using Windows.System;
 
@@ -23,6 +25,9 @@ public sealed partial class ShellPage : Page
         ViewModel = viewModel;
         InitializeComponent();
 
+        // initialize provider combo
+        _ = InitializeProviderComboAsync();
+
         ViewModel.NavigationService.Frame = NavigationFrame;
         ViewModel.NavigationViewService.Initialize(NavigationViewControl);
 
@@ -30,6 +35,45 @@ public sealed partial class ShellPage : Page
         App.MainWindow.SetTitleBar(AppTitleBar);
         App.MainWindow.Activated += MainWindow_Activated;
         AppTitleBarText.Text = "AppDisplayName".GetLocalized();
+    }
+
+    private async Task InitializeProviderComboAsync()
+    {
+        try
+        {
+            var providerService = App.GetService<CopilotDesktop.Services.IProviderService>();
+            await providerService.InitializeAsync();
+                if (ProviderCombo != null)
+                {
+                    ProviderCombo.ItemsSource = providerService.CombinedProviders;
+                    var selected = providerService.CombinedProviders.FirstOrDefault(p => string.Equals(p.Url?.Trim(), providerService.SelectedProviderUrl?.Trim(), System.StringComparison.OrdinalIgnoreCase));
+                    if (selected != null) ProviderCombo.SelectedItem = selected;
+                }
+
+            providerService.SelectedProviderChanged += (provider) =>
+            {
+                try
+                {
+                    if (ProviderCombo != null && provider != null)
+                    {
+                        ProviderCombo.SelectedItem = provider;
+                    }
+                }
+                catch { }
+            };
+        }
+        catch { }
+    }
+
+    private async void ProviderCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ProviderCombo == null) return;
+        if (ProviderCombo.SelectedItem is CopilotDesktop.Models.ProviderItem provider)
+        {
+            var providerService = App.GetService<CopilotDesktop.Services.IProviderService>();
+            // Select provider for the current session only (do not change the persisted default)
+            await providerService.SelectProviderTransientAsync(provider);
+        }
     }
 
     private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)

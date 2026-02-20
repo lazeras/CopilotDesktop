@@ -6,11 +6,15 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:helpers="using:CopilotDesktop.Helpers"
     xmlns:xaml="using:Microsoft.UI.Xaml"
+    xmlns:local="using:CopilotDesktop.Views"
+    xmlns:models="using:CopilotDesktop.Models"
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:EnumToBooleanConverter x:Key="EnumToBooleanConverter" />
 
         <Style x:Key="SettingsCardStyle" TargetType="Border">
+
+
             <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
             <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
             <Setter Property="BorderThickness" Value="1" />
@@ -120,6 +124,49 @@
                     </Border>
                 </StackPanel>
 
+
+                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <StackPanel VerticalAlignment="Center" Margin="10">
+                        <!-- Default provider selection -->
+                        <TextBlock Text="Default Provider" Margin="5,12,5,0" />
+                        <ComboBox x:Name="DefaultProviderCombo" Margin="5" DisplayMemberPath="Name" SelectionChanged="DefaultProviderCombo_SelectionChanged" />
+
+                    </StackPanel>
+                </Grid>
+
+                <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+                    <StackPanel VerticalAlignment="Center" Margin="10">
+                        <!-- Input for Name -->
+                        <TextBox x:Name="NameInput" Header="Name" PlaceholderText="Enter name" Margin="5"/>
+
+                        <!-- Input for URL -->
+                        <TextBox x:Name="UrlInput" Header="URL" PlaceholderText="Enter URL" Margin="5"/>
+
+                        <!-- Add Button -->
+                        <Button Content="Add" Click="AddEntry_Click" Margin="5"/>
+
+                        <!-- Validation / feedback -->
+                        <TextBlock x:Name="ValidationMessage" Foreground="Red" Margin="5" Visibility="Collapsed" />
+
+                        
+                        <!-- ListView to display entries -->
+                        <ListView x:Name="EntriesList" Height="300">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="models:ProviderItem">
+                                    <Grid ColumnDefinitions="*,Auto" Margin="4">
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock Text="{x:Bind Name}" FontWeight="SemiBold" />
+                                            <HyperlinkButton Content="{x:Bind Url}" NavigateUri="{x:Bind Url}" />
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="Delete" Margin="8,0,0,0" Click="RemoveEntry_Click" Tag="{x:Bind}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackPanel>
+                </Grid>
+                
+                
                 <!-- About Section -->
                 <StackPanel Spacing="12">
                     <TextBlock Text="About" Style="{ThemeResource SubtitleTextBlockStyle}" />

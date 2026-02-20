@@ -3,8 +3,10 @@ using CommunityToolkit.Mvvm.Input;
 
 using CopilotDesktop.Contracts.Services;
 using CopilotDesktop.Contracts.ViewModels;
+using CopilotDesktop.Models;
 
 using Microsoft.Web.WebView2.Core;
+using System.Threading.Tasks;
 
 namespace CopilotDesktop.ViewModels;
 
@@ -14,47 +16,106 @@ namespace CopilotDesktop.ViewModels;
 /// </summary>
 public partial class WebViewViewModel : ObservableRecipient, INavigationAware
 {
-    /// <summary>
-    /// Gets or sets the current URI being displayed in the WebView.
-    /// Defaults to https://copilot.microsoft.com.
-    /// </summary>
-    [ObservableProperty]
-    private Uri source = new("https://copilot.microsoft.com");
+    private const string _sourceKey = "WebViewSource";
 
-    /// <summary>
+    /// 
+
+    /// Gets or sets the current URI being displayed in the WebView.
+    /// Loaded from local settings and can be saved back.
+    /// 
+
+    [ObservableProperty]
+    private Uri source;
+
+    /// 
+
     /// Gets or sets a value indicating whether the WebView is currently loading content.
-    /// </summary>
+    /// 
+
     [ObservableProperty]
     private bool isLoading = true;
 
-    /// <summary>
+    /// 
+
     /// Gets or sets a value indicating whether navigation failures have occurred.
     /// Used to display error UI to the user.
-    /// </summary>
+    /// 
+
     [ObservableProperty]
     private bool hasFailures;
 
-    /// <summary>
+    /// 
+
     /// Gets the WebView service that provides browser functionality.
-    /// </summary>
+    /// 
+
     public IWebViewService WebViewService
     {
         get;
     }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="WebViewViewModel"/> class.
-    /// </summary>
-    /// <param name="webViewService">The WebView service for browser operations.</param>
-    public WebViewViewModel(IWebViewService webViewService)
+    private readonly ILocalSettingsService _localSettingsService;
+    private readonly CopilotDesktop.Services.IProviderService _providerService;
+
+    /// 
+
+    /// Initializes a new instance of the  class.
+    /// 
+
+    /// The WebView service for browser operations.
+    /// The local settings service for persisting settings.
+    public Task Initialization { get; }
+
+    public WebViewViewModel(IWebViewService webViewService, ILocalSettingsService localSettingsService, CopilotDesktop.Services.IProviderService providerService)
     {
         WebViewService = webViewService;
+        _localSettingsService = localSettingsService;
+        _providerService = providerService;
+
+        Initialization = InitializeSourceAsync();
+
+        // react to provider changes
+        _providerService.SelectedProviderChanged += (provider) =>
+        {
+            if (provider != null)
+            {
+                Source = new System.Uri(provider.Url);
+            }
+        };
     }
 
-    /// <summary>
+    private async Task InitializeSourceAsync()
+    {
+        if (_providerService != null)
+        {
+            await _providerService.InitializeAsync();
+        }
+
+        // Prefer the configured/default provider URL on app start (first-run/default behavior).
+        // Fall back to a previously saved WebViewSource only if no selected provider URL exists.
+        var selectedProviderUrl = _providerService?.SelectedProviderUrl;
+        var savedUriString = await _localSettingsService.ReadSettingAsync<string>(_sourceKey);
+
+        if (!string.IsNullOrEmpty(selectedProviderUrl))
+        {
+            Source = new Uri(selectedProviderUrl);
+        }
+        else if (!string.IsNullOrEmpty(savedUriString))
+        {
+            Source = new Uri(savedUriString);
+        }
+        else
+        {
+            Source = new Uri("https://copilot.microsoft.com");
+        }
+    }
+
+    /// 
+
     /// Opens the current WebView source URL in the system's default browser.
-    /// </summary>
-    /// <returns>A task representing the asynchronous operation.</returns>
+    /// 
+
+    /// A task representing the asynchronous operation.
     [RelayCommand]
     private async Task OpenInBrowser()
     {
@@ -64,105 +125,113 @@ public partial class WebViewViewModel : ObservableRecipient, INavigationAware
         }
     }
 
-    /// <summary>
-    /// Reloads the current page in the WebView.
-    /// </summary>
-    [RelayCommand]
-    private void Reload()
-    {
-        WebViewService.Reload();
-    }
+    /// 
 
-    /// <summary>
+    /// Reloads the current page in the WebView.
+    /// 
+
+    [RelayCommand]
+    private void Reload() => WebViewService.Reload();
+
+    /// 
+
     /// Navigates forward in the browser history if possible.
-    /// </summary>
-    /// <remarks>
-    /// The command's CanExecute state is controlled by <see cref="BrowserCanGoForward"/>.
-    /// </remarks>
+    /// 
+
+    /// 
+    /// The command's CanExecute state is controlled by .
+    /// 
     [RelayCommand(CanExecute = nameof(BrowserCanGoForward))]
     private void BrowserForward()
     {
-        if (WebViewService.CanGoForward)
-        {
-            WebViewService.GoForward();
-        }
+        if (WebViewService.CanGoForward) WebViewService.GoForward();
     }
 
-    /// <summary>
+    /// 
+
     /// Determines whether the browser can navigate forward in the history.
-    /// </summary>
-    /// <returns><c>true</c> if forward navigation is available; otherwise, <c>false</c>.</returns>
-    private bool BrowserCanGoForward()
-    {
-        return WebViewService.CanGoForward;
-    }
+    /// 
 
-    /// <summary>
+    /// true if forward navigation is available; otherwise, false.
+    private bool BrowserCanGoForward() => WebViewService.CanGoForward;
+
+    /// 
+
     /// Navigates backward in the browser history if possible.
-    /// </summary>
-    /// <remarks>
-    /// The command's CanExecute state is controlled by <see cref="BrowserCanGoBack"/>.
-    /// </remarks>
+    /// 
+
+    /// 
+    /// The command's CanExecute state is controlled by .
+    /// 
     [RelayCommand(CanExecute = nameof(BrowserCanGoBack))]
     private void BrowserBack()
     {
-        if (WebViewService.CanGoBack)
-        {
-            WebViewService.GoBack();
-        }
+        if (WebViewService.CanGoBack) WebViewService.GoBack();
     }
 
-    /// <summary>
+    /// 
+
     /// Determines whether the browser can navigate backward in the history.
-    /// </summary>
-    /// <returns><c>true</c> if backward navigation is available; otherwise, <c>false</c>.</returns>
-    private bool BrowserCanGoBack()
-    {
-        return WebViewService.CanGoBack;
-    }
+    /// 
 
-    /// <summary>
+    /// true if backward navigation is available; otherwise, false.
+    private bool BrowserCanGoBack() => WebViewService.CanGoBack;
+
+    /// 
+
     /// Called when the view is navigated to.
     /// Subscribes to the NavigationCompleted event.
-    /// </summary>
-    /// <param name="parameter">Optional navigation parameter.</param>
+    /// 
+
+    /// Optional navigation parameter.
     public void OnNavigatedTo(object parameter)
     {
         WebViewService.NavigationCompleted += OnNavigationCompleted;
     }
 
-    /// <summary>
+    /// 
+
     /// Called when the view is navigated away from.
     /// Unsubscribes from events and cleans up resources.
-    /// </summary>
+    /// 
+
     public void OnNavigatedFrom()
     {
         WebViewService.UnregisterEvents();
         WebViewService.NavigationCompleted -= OnNavigationCompleted;
+
+        _ = SaveSourceAsync(Source);
     }
 
-    /// <summary>
+    private async Task SaveSourceAsync(Uri uri)
+    {
+        if (uri == null) return;
+        await _localSettingsService.SaveSettingAsync(_sourceKey, uri.AbsoluteUri);
+    }
+
+    /// 
+
     /// Handles the navigation completed event from the WebView.
     /// Updates loading state, command availability, and error status.
-    /// </summary>
-    /// <param name="sender">The event sender.</param>
-    /// <param name="webErrorStatus">The error status of the navigation, or default if successful.</param>
+    /// 
+
+    /// The event sender.
+    /// The error status of the navigation, or default if successful.
     private void OnNavigationCompleted(object? sender, CoreWebView2WebErrorStatus webErrorStatus)
     {
         IsLoading = false;
         BrowserBackCommand.NotifyCanExecuteChanged();
         BrowserForwardCommand.NotifyCanExecuteChanged();
-
-        if (webErrorStatus != default)
-        {
-            HasFailures = true;
-        }
+        // set HasFailures based on the reported web error status; clear failures on success
+        HasFailures = webErrorStatus != default;
     }
 
-    /// <summary>
+    /// 
+
     /// Retries loading the current page after a navigation failure.
     /// Resets the failure state and reloads the WebView.
-    /// </summary>
+    /// 
+
     [RelayCommand]
     private void OnRetry()
     {

@@ -13,6 +13,9 @@ namespace CopilotDesktop.Views;
 /// </remarks>
 public sealed partial class WebViewPage : Page
 {
+
+
+
     /// <summary>
     /// Gets the ViewModel that provides data and commands for this page.
     /// </summary>
@@ -83,8 +86,27 @@ public sealed partial class WebViewPage : Page
             // Ensure WebView2 runtime is initialized before navigation
             if (CopilotView != null)
             {
+                // Wait for ViewModel to finish loading the initial source (settings/defaults)
+                try
+                {
+                    if (ViewModel?.Initialization != null)
+                    {
+                        await ViewModel.Initialization;
+                    }
+                }
+                catch { }
+
                 //System.Diagnostics.Debug.WriteLine("[INFO] WebViewPage: Initializing WebView2...");
                 await CopilotView.EnsureCoreWebView2Async();
+                // Ensure WebView navigates to the ViewModel source (binding may already handle this)
+                try
+                {
+                    if (ViewModel?.Source != null)
+                    {
+                        CopilotView.Source = ViewModel.Source;
+                    }
+                }
+                catch { }
                 //System.Diagnostics.Debug.WriteLine("[INFO] WebViewPage: WebView2 initialized successfully");
             }
         }
